@@ -19,7 +19,7 @@
      <rect>
       <x>20</x>
       <y>10</y>
-      <width>791</width>
+      <width>1491</width>
       <height>511</height>
      </rect>
     </property>
@@ -27,8 +27,8 @@
    <widget class="QTableView" name="tableView">
     <property name="geometry">
      <rect>
-      <x>840</x>
-      <y>10</y>
+      <x>30</x>
+      <y>530</y>
       <width>641</width>
       <height>341</height>
      </rect>
@@ -37,8 +37,8 @@
    <widget class="QPushButton" name="pushButton">
     <property name="geometry">
      <rect>
-      <x>950</x>
-      <y>450</y>
+      <x>710</x>
+      <y>650</y>
       <width>113</width>
       <height>32</height>
      </rect>

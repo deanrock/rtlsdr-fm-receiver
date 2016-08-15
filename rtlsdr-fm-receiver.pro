@@ -15,11 +15,15 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     qcustomplot.cpp \
-    datapointmodel.cpp
+    datapointmodel.cpp \
+    sampledata.cpp \
+    samplingthread.cpp
 
 HEADERS  += mainwindow.h \
     qcustomplot.h \
-    datapointmodel.h
+    datapointmodel.h \
+    sampledata.h \
+    samplingthread.h
 
 FORMS    += mainwindow.ui
 

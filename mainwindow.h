@@ -4,6 +4,9 @@
 #include <QMainWindow>
 #include "qcustomplot.h"
 #include "datapointmodel.h"
+#include "sampledata.h"
+#include <complex>
+#include "samplingthread.h"
 
 namespace Ui {
 class MainWindow;
@@ -24,7 +27,9 @@ private:
     Ui::MainWindow *ui;
     QCustomPlot *customPlot;
     DataPointModel myModel;
+
     void resample();
+    SamplingThread *samplingThread;
 };
 
 #endif // MAINWINDOW_H
