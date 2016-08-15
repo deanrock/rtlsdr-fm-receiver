@@ -24,7 +24,7 @@ void SamplingThread::run()
     }
 
 
-    r = rtlsdr_set_center_freq(dev, 94500000);
+    r = rtlsdr_set_center_freq(dev, 94300000);
     if (r < 0) {
         fprintf(stderr, "WARNING: Failed to set center freq.\n");
         exit(1);
@@ -88,23 +88,15 @@ void SamplingThread::run()
                 fftw_execute(p); /* repeat as needed */
 
                 for (int i =0;i<5000;i++) {
-                    double x =  outx[i].real() *  outx[i].real() +  outx[i].imag() *  outx[i].imag();
-                    averageDataPoints[i] += complex<double>(1, x);
+                    //double x =  outx[i].real() *  outx[i].real() +  outx[i].imag() *  outx[i].imag();
+                    //averageDataPoints[i] += complex<double>(1, x);
+                    averageDataPoints[i] += outx[i];
                 }
 
                  fftw_destroy_plan(p);
 
-                if (averageCount > 500) {
-                     complex<double>com[5000];
-                    for (int i =0;i<5000;i++) {
-                        com[i] = complex<double>(1, averageDataPoints[i].imag() / averageCount);
-                        averageDataPoints[i]=0;
-                        averageCount = 0;
-                    }
-
-
-
-
+                if (averageCount > 50) {
+                    averageCount = 0;
 
                     this->mutex.lock();
                     std::copy(std::begin(outx), std::end(outx), std::begin(this->data->dataPoints));
