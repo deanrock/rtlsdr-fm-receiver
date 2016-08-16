@@ -30,6 +30,7 @@ private:
 
     void resample();
     SamplingThread *samplingThread;
+    int count = 0;
 };
 
 #endif // MAINWINDOW_H

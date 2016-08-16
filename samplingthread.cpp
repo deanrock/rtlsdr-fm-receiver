@@ -38,8 +38,6 @@ void SamplingThread::run()
         exit(1);
     }
 
-
-
     int out_block_size = 16384;
     int n_read;
 
@@ -48,9 +46,6 @@ void SamplingThread::run()
     deque<complex<double>> temp;
 
     uint8_t *buffer = (uint8_t*)malloc(out_block_size * sizeof(uint8_t));
-
-    int averageCount = 0;
-    complex<double>averageDataPoints[5000];
 
     for(;;) {
         r = rtlsdr_read_sync(dev, buffer, out_block_size, &n_read);
@@ -65,11 +60,9 @@ void SamplingThread::run()
             temp.push_back(complex<double>(a,b));
         }
 
-
         for(;;) {
             // we have at least 5000 data points
             if (temp.size() >= 5000) {
-
                 // process those data points
                 complex<double>com[5000];
 
@@ -85,31 +78,14 @@ void SamplingThread::run()
                 out = (fftw_complex*) reinterpret_cast<fftw_complex*>(outx);
                 p = fftw_plan_dft_1d(5000, in, out, FFTW_FORWARD, FFTW_ESTIMATE);
 
-                fftw_execute(p); /* repeat as needed */
+                fftw_execute(p);
 
-                for (int i =0;i<5000;i++) {
-                    //double x =  outx[i].real() *  outx[i].real() +  outx[i].imag() *  outx[i].imag();
-                    //averageDataPoints[i] += complex<double>(1, x);
-                    averageDataPoints[i] += outx[i];
-                }
+                fftw_destroy_plan(p);
 
-                 fftw_destroy_plan(p);
-
-                if (averageCount > 50) {
-                    averageCount = 0;
-
-                    this->mutex.lock();
-                    std::copy(std::begin(outx), std::end(outx), std::begin(this->data->dataPoints));
-                    this->mutex.unlock();
-                    emit dataAvailable();
-
-
-                    printf("read: %d", n_read);
-
-
-                }else{
-                    averageCount++;
-                }
+                this->mutex.lock();
+                std::copy(std::begin(outx), std::end(outx), std::begin(this->data->dataPoints));
+                this->mutex.unlock();
+                emit dataAvailable();
             }else{
                 break;
             }
