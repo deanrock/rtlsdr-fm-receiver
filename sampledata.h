@@ -8,7 +8,7 @@ class SampleData
 {
 public:
     SampleData();
-    std::complex<double>dataPoints[5000];
+    std::complex<double>* dataPoints = NULL;
 };
 
 Q_DECLARE_METATYPE(SampleData);

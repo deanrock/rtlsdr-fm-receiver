@@ -8,7 +8,7 @@ DataPointModel::DataPointModel(QObject *parent) : QAbstractTableModel(parent)
 
 int DataPointModel::rowCount(const QModelIndex &parent) const
 {
-    return 5000;
+    return 100000;
 }
 
 int DataPointModel::columnCount(const QModelIndex &parent) const

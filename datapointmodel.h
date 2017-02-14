@@ -13,7 +13,7 @@ public:
     int rowCount(const QModelIndex &parent = QModelIndex()) const ;
     int columnCount(const QModelIndex &parent = QModelIndex()) const;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
-    complex<double>dataPoints[5000];
+    complex<double>dataPoints[100000];
 };
 
 #endif // DATAPOINTMODEL_H

@@ -3,6 +3,7 @@
 #include <complex>
 #include "datapointmodel.h"
 #include "samplingthread.h"
+#include <gnuradio/filter/firdes.h>
 
 using namespace std;
 
@@ -15,6 +16,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // set-up UI
     customPlot = ui->customPlot;
+    customPlot->addGraph();
+    customPlot->xAxis->setLabel("x");
+    customPlot->yAxis->setLabel("y");
 
     ui->tableView->setModel(&myModel);
     ui->tableView->show();
@@ -23,6 +27,8 @@ MainWindow::MainWindow(QWidget *parent) :
     samplingThread = new SamplingThread();
     connect(samplingThread, &SamplingThread::dataAvailable, this, &MainWindow::resample);
     samplingThread->start();
+
+    //gr::filter::firdes::low_pass()
 }
 
 MainWindow::~MainWindow()
@@ -33,11 +39,12 @@ MainWindow::~MainWindow()
 void MainWindow::resample()
 {
     if (count == 0) {
-        QVector<double> x(5000), y(5000);
+        int size = 10000;
+        QVector<double> x(size), y(size);
         samplingThread->mutex.lock();
 
         double mx = abs(samplingThread->data->dataPoints[0]);
-        for (int i=0; i<5000; i++)
+        for (int i=0; i<size; i++)
         {
             complex<double> b = samplingThread->data->dataPoints[i];;
 
@@ -46,7 +53,8 @@ void MainWindow::resample()
             }
         }
 
-        for (int i=0; i<5000; i++)
+        int minY =-100, maxY=100;
+        for (int i=0; i<size; i++)
         {
             complex<double> b = samplingThread->data->dataPoints[i];
 
@@ -56,16 +64,8 @@ void MainWindow::resample()
             y[i] = z;
 
             myModel.dataPoints[i] = z;
-        }
 
-        samplingThread->mutex.unlock();
-
-        ui->tableView->reset();
-
-        int minY =-100, maxY=100;
-
-        for(int i= 0;i<5000;i++) {
-
+            // find min/max y[i]
             if (minY > y[i]) {
                 y[i] = minY;
             }
@@ -75,20 +75,24 @@ void MainWindow::resample()
             }
         }
 
-        customPlot->addGraph();
+        for (int i=0; i<size; i++)
+        {
+            y[i] = y[i] * 2 + 50;
+        }
+
+        samplingThread->mutex.unlock();
+
+        ui->tableView->reset();
+
         customPlot->graph(0)->setData(x, y);
 
-        customPlot->xAxis->setLabel("x");
-        customPlot->yAxis->setLabel("y");
-
-        customPlot->xAxis->setRange(0, 5000);
+        customPlot->xAxis->setRange(0, size);
         customPlot->yAxis->setRange(minY, maxY);
         customPlot->replot();
     }
 
     count++;
-
-    if (count > 50) {
+    if (count > 10) {
         count = 0;
     }
 }
